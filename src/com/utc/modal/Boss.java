@@ -6,6 +6,9 @@ import com.utc.manager.LoadUtils;
 import java.awt.*;
 
 public class Boss extends Tank {
+    private static Image imgBanhXe = LoadUtils.getImage("tanks_tankTracks1.png");
+    private static Image imgThanXe = LoadUtils.getImage("tanks_tankDesert_body1.png");
+    private static Image imgNongSung = LoadUtils.getImage("tanks_turret1.png");
 
     @Override
     public void createOrient() {
@@ -28,13 +31,8 @@ public class Boss extends Tank {
 
     @Override
     public void draw(Graphics2D g2d) {
-        Image imgBanhXe = LoadUtils.getImage("tanks_tankTracks1.png");
-        Image imgThanXe = LoadUtils.getImage("tanks_tankDesert_body1.png");
-        Image imgNongSung = LoadUtils.getImage("tanks_turret1.png");
-
         g2d.drawImage(imgNongSung, x, y, null);
         g2d.drawImage(imgBanhXe, x-15, y+13, null);
         g2d.drawImage(imgThanXe, x-17, y+1, null);
-
     }
 }

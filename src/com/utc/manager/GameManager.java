@@ -3,6 +3,7 @@ package com.utc.manager;
 import com.utc.background.Cloud;
 import com.utc.modal.Boss;
 import com.utc.modal.Bullet;
+import com.utc.modal.TankPlayer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,10 +16,13 @@ public class GameManager {
     private ArrayList<Integer> viTriX;
     private ArrayList<Integer> viTriY;
     private Bullet bullet;
+    private TankPlayer tankPlayer;
     private boolean khaiHoa = true;
+    private boolean loadTank = true;
     private int soLanVeMay;
     private int soLanVeTank;
-    int hoanhDo = (int) (460 + Math.random() * 150);
+    private float t;
+    int hoanhDo = (int) (460 + Math.random() * 140);
     int tungDo = 240;
 
     public void initGame() {
@@ -26,6 +30,8 @@ public class GameManager {
         arrBosses = new ArrayList<>();
         arrBullet = new ArrayList<>();
         bullet = new Bullet();
+        tankPlayer = new TankPlayer();
+        tankPlayer.setToaDo(100,370);
     }
 
     private void initCloud() {
@@ -38,6 +44,13 @@ public class GameManager {
         if (arrBosses.size() < 1) {
             arrBosses.add(new Boss());
         }
+    }
+
+    public void dieuKienTank(int orient){
+
+        loadTank =false;
+        tankPlayer.setOrient(orient);
+        tankPlayer.move();
     }
 
     public void draw(Graphics2D g2d) {
@@ -59,6 +72,8 @@ public class GameManager {
             soLanVeTank++;
             b.draw(g2d);
         }
+
+        tankPlayer.draw(g2d);
     }
 
     public void bossFire() {
@@ -66,6 +81,8 @@ public class GameManager {
             bullet.setToaDo(hoanhDo, tungDo);
             bullet.createOrient();
         }
+        t=t+1f;
+        bullet.setT((int) t);
         khaiHoa = false;
         bullet.move();
     }

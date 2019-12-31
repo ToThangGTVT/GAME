@@ -3,7 +3,6 @@ package com.utc.background;
 import com.utc.manager.LoadUtils;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class BackGround {
     private Image imgTerrainLeft;
@@ -14,9 +13,7 @@ public class BackGround {
     private Image imgMuiTen;
     private Image imgStone;
     private Image imgMuiTenN;
-    private Image imgSnow;
-    private Image imagePlane;
-
+    private Image imgMoon;
 
     public BackGround() {
         imgTerrainLeft = LoadUtils.getImage("ZigzagGrass_Half_LeftRound.png");
@@ -27,14 +24,15 @@ public class BackGround {
         imgStone = LoadUtils.getImage("forest_pack_94.png");
         imgMuiTen =LoadUtils.getImage("SignRight.png");
         imgMuiTenN = LoadUtils.getImage("SignLeft.png");
+        imgMoon = LoadUtils.getImage("moon.png");
     }
 
     public void getBackGround(Graphics2D g2d){
-
         g2d.drawImage(imgBackGround2,0,150,null);
         g2d.drawImage(imgBackGround2,imgBackGround2.getWidth(null),150,null);
         g2d.drawImage(imgBackGround,0,80,null);
         g2d.drawImage(imgBackGround,imgBackGround.getWidth(null),80,null);
+        g2d.drawImage(imgMoon,100,100,null);
 
         /**
          * terraint
@@ -58,7 +56,6 @@ public class BackGround {
         g2d.drawImage(imgStone,190,352,null);
         g2d.drawImage(imgMuiTen,450,250,20,20,null);
         g2d.drawImage(imgMuiTenN,250,381,20,20,null);
-
     }
 
 }

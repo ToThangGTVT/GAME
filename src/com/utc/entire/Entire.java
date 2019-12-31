@@ -3,8 +3,8 @@ package com.utc.entire;
 import java.awt.*;
 
 public abstract class Entire {
-    protected static final int ORIENT_LEFT = 0;
-    protected static final int ORIENT_RIGHT = 1;
+    public static final int ORIENT_LEFT = 0;
+    public static final int ORIENT_RIGHT = 1;
     protected int x;
     protected int y;
     protected int orient;
@@ -26,5 +26,13 @@ public abstract class Entire {
     public void setToaDo(int x, int y){
         this.y = y;
         this.x = x;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

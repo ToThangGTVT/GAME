@@ -16,6 +16,10 @@ public abstract class Tank extends Entire {
         bullet.move();
     }
 
+    public void setOrient(int orient){
+        this.orient = orient;
+    }
+
     @Override
     public void createOrient() {
         Random rnd = new Random();

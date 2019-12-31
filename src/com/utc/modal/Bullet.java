@@ -7,11 +7,15 @@ import java.awt.*;
 import java.util.Random;
 
 public class Bullet extends Entire {
-    private int t = 1;
+    private float t;
+    private static Image imgBullet= LoadUtils.getImage("tank_explosion10.png");
     private static int xBullet;
     private static int yBullet;
-    private int vBullet = 60;
     private int y0;
+
+    public void setT(float t) {
+        this.t = t;
+    }
 
     @Override
     public void setToaDo(int x, int y) {
@@ -23,13 +27,15 @@ public class Bullet extends Entire {
     public void createOrient() {
         Random rnd = new Random();
         orient = rnd.nextInt(61);
+        orient = 70;
     }
 
     @Override
     public void move() {
-        x = (int) (vBullet * Math.cos(Math.toRadians(orient)) * t);
-        y = (int) (y0 - vBullet * Math.sin(Math.toRadians(orient)) * t + 4.905 * t * t);
-        setToaDo(x,y);
+        float vBullet = 300f;
+        x = (int) (vBullet * Math.cos(Math.toRadians(orient)) * t) / 1200;
+        y = (int) (-vBullet * Math.sin(Math.toRadians(orient)) * t + 4.905 * t * t) / 1200;
+        setToaDo(xBullet - x,yBullet + y);
     }
 
     @Override
@@ -38,7 +44,6 @@ public class Bullet extends Entire {
     }
 
     public static void drawBullet(Graphics2D g2d) {
-        Image imgBullet = LoadUtils.getImage("tank_explosion10.png");
         g2d.drawImage(imgBullet, xBullet, yBullet, 10, 10, null);
     }
 }

@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.Random;
 
 public class Cloud extends Entire {
-    private static Image imgCloud;
+    private static Image imgCloud = LoadUtils.getImage("forest_pack_107.png");;
     protected int soLanDoiHuong;
 
     public int getSoLanDoiHuong() {
@@ -47,7 +47,6 @@ public class Cloud extends Entire {
 
     @Override
     public void draw(Graphics2D g2d) {
-        imgCloud = LoadUtils.getImage("forest_pack_107.png");
         g2d.drawImage(imgCloud, x, y, null);
     }
 
