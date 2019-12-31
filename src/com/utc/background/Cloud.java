@@ -8,16 +8,8 @@ import java.awt.*;
 import java.util.Random;
 
 public class Cloud extends Entire {
+    private static Image imgCloud;
     protected int soLanDoiHuong;
-    private Image imgCloud;
-
-    public void setCaoDo(int y) {
-        this.y = y;
-    }
-
-    public void setHoanhDo(int x) {
-        this.x = x;
-    }
 
     public int getSoLanDoiHuong() {
         return soLanDoiHuong;
@@ -29,22 +21,6 @@ public class Cloud extends Entire {
 
     public Cloud(int y) {
         this.y = y;
-    }
-
-    public void drawCloud(Graphics2D g2d) {
-        imgCloud = LoadUtils.getImage("forest_pack_107.png");
-        g2d.drawImage(imgCloud, x, y, null);
-    }
-
-    private void doiNguocHuong() {
-        switch (orient) {
-            case ORIENT_LEFT:
-                orient = ORIENT_RIGHT;
-                break;
-            case ORIENT_RIGHT:
-                orient = ORIENT_LEFT;
-                break;
-        }
     }
 
     @Override
@@ -68,4 +44,11 @@ public class Cloud extends Entire {
             doiNguocHuong();
         }
     }
+
+    @Override
+    public void draw(Graphics2D g2d) {
+        imgCloud = LoadUtils.getImage("forest_pack_107.png");
+        g2d.drawImage(imgCloud, x, y, null);
+    }
+
 }

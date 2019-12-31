@@ -8,7 +8,7 @@ public class GFrame extends JFrame {
     public static final int W_FRAME =700;
     public GFrame() throws HeadlessException {
         setSize(W_FRAME,H_FRAME);
-        setTitle("Game");
+        setTitle("Bảo vệ bầu trời");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
