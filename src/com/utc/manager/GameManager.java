@@ -1,5 +1,6 @@
 package com.utc.manager;
 
+import com.utc.background.BackGround;
 import com.utc.background.Cloud;
 import com.utc.gui.GFrame;
 import com.utc.modal.Boss;
@@ -15,6 +16,7 @@ public class GameManager {
     private Boss boss;
     private Bullet bullet;
     private TankPlayer tankPlayer;
+    private BackGround backGround;
     private boolean roiTudo;
     public static boolean khaiHoa = true;
     private int soLanVeMay;
@@ -25,6 +27,7 @@ public class GameManager {
     int tungDo = 240;
 
     public void initGame() {
+        backGround = new BackGround();
         arrCloud = new ArrayList<>();
         boss = new Boss();
         bullet = new Bullet();
@@ -41,17 +44,18 @@ public class GameManager {
     public void dieuKienTank(int orient) {
         tankPlayer.setOrient(orient);
         tankPlayer.move();
-        if (tankPlayer.getX() > 300){
+        if (tankPlayer.getX() >= 300) {
             roiTudo = true;
             viTriRoi = true;
-        }else if ( tankPlayer.getX()<50){
+        } else if (tankPlayer.getX() <= 50) {
             roiTudo = true;
-            viTriRoi =false;
+            viTriRoi = false;
         }
     }
 
     public void draw(Graphics2D g2d) {
         Random rnd = new Random();
+        backGround.getBackGround(g2d);
         int i = 0;
         for (Cloud c : arrCloud) {
             if (soLanVeMay == 0) {
@@ -61,28 +65,28 @@ public class GameManager {
             c.draw(g2d);
             i++;
         }
-
         if (soLanVeTank) {
             boss.setToaDo(hoanhDo, tungDo);
         }
-        soLanVeTank=false;
+        soLanVeTank = false;
         boss.draw(g2d);
         tankPlayer.draw(g2d);
     }
 
-    public void roiTuDo(){
-        if (roiTudo){
-            if (viTriRoi){
+    public void roiTuDo() {
+        if (roiTudo) {
+            if (viTriRoi) {
                 tankPlayer.setX(300);
             } else {
                 tankPlayer.setX(50);
             }
             tankPlayer.roiTuDo();
         }
-        if (tankPlayer.getY()> GFrame.H_FRAME){
+        if (tankPlayer.getY() > GFrame.H_FRAME) {
             roiTudo = false;
             tankPlayer.setToaDo(100, 370);
             tankPlayer.setT(0);
+            backGround.setX(0);
         }
     }
 
@@ -93,7 +97,7 @@ public class GameManager {
             int k = Bullet.gocBan;
             bullet.setToaDo(
                     (int) (boss.getX() - 35 * Math.cos(Math.toRadians(k))),
-                    (int) (boss.getY()-35*Math.sin(Math.toRadians(k))));
+                    (int) (boss.getY() - 35 * Math.sin(Math.toRadians(k))));
         }
         t = t + 1f;
         bullet.setT((int) t);
@@ -116,4 +120,17 @@ public class GameManager {
         boss.createOrient();
         boss.move();
     }
+
+    public void diChuyenBackGroundTrai() {
+        if (!roiTudo) {
+            backGround.diChuyenBackGroundTrai();
+        }
+    }
+
+    public void diChuyenBackGroundPhai() {
+        if (!roiTudo) {
+            backGround.diChuyenBackGroundPhai();
+        }
+    }
+
 }

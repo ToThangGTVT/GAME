@@ -38,12 +38,8 @@ public class GPanel extends JPanel implements KeyListener {
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g2d);
-        BackGround backGround = new BackGround();
-        backGround.getBackGround(g2d);
         gameManager.draw(g2d);
         Bullet.drawBullet(g2d);
-
-
     }
 
     Runnable r = new Runnable() {
@@ -105,8 +101,10 @@ public class GPanel extends JPanel implements KeyListener {
                 repaint();
                 if (flag[KeyEvent.VK_RIGHT] || flag[KeyEvent.VK_D]) {
                     gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
+                    gameManager.diChuyenBackGroundTrai();
                 } else if (flag[KeyEvent.VK_LEFT] || flag[KeyEvent.VK_A]) {
                     gameManager.dieuKienTank(Entire.ORIENT_LEFT);
+                    gameManager.diChuyenBackGroundPhai();
                 }
                 gameManager.roiTuDo();
                 try {

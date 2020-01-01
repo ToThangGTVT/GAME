@@ -14,6 +14,7 @@ public class BackGround {
     private Image imgStone;
     private Image imgMuiTenN;
     private Image imgMoon;
+    private int x;
 
     public BackGround() {
         imgTerrainLeft = LoadUtils.getImage("ZigzagGrass_Half_LeftRound.png");
@@ -28,10 +29,12 @@ public class BackGround {
     }
 
     public void getBackGround(Graphics2D g2d){
-        g2d.drawImage(imgBackGround2,0,150,null);
-        g2d.drawImage(imgBackGround2,imgBackGround2.getWidth(null),150,null);
-        g2d.drawImage(imgBackGround,0,80,null);
-        g2d.drawImage(imgBackGround,imgBackGround.getWidth(null),80,null);
+        g2d.drawImage(imgBackGround2,x/5 - imgBackGround2.getWidth(null),150,null);
+        g2d.drawImage(imgBackGround2,x/5,150,null);
+        g2d.drawImage(imgBackGround2,x/5 + imgBackGround2.getWidth(null),150,null);
+        g2d.drawImage(imgBackGround,x/3-imgBackGround.getWidth(null),80,null);
+        g2d.drawImage(imgBackGround,x/3,80,null);
+        g2d.drawImage(imgBackGround,x/3+ imgBackGround.getWidth(null),80,null);
         g2d.drawImage(imgMoon,100,100,null);
 
         /**
@@ -69,4 +72,14 @@ public class BackGround {
         return new Rectangle(50,400,w,h);
     }
 
+    public void diChuyenBackGroundTrai(){
+        x--;
+    }
+    public void diChuyenBackGroundPhai(){
+        x++;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
 }
