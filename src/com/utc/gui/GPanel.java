@@ -94,7 +94,6 @@ public class GPanel extends JPanel implements KeyListener {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     };
@@ -109,6 +108,7 @@ public class GPanel extends JPanel implements KeyListener {
                 } else if (flag[KeyEvent.VK_LEFT] || flag[KeyEvent.VK_A]) {
                     gameManager.dieuKienTank(Entire.ORIENT_LEFT);
                 }
+                gameManager.roiTuDo();
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {

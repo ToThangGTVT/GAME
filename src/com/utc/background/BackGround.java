@@ -43,7 +43,8 @@ public class BackGround {
         g2d.drawImage(imgTerrainCentter,
                 50+imgTerrainLeft.getWidth(null)*2,400,null);
         g2d.drawImage(imgTerrainRight,
-                50+imgTerrainLeft.getWidth(null)+imgTerrainCentter.getWidth(null)*2,
+                50+imgTerrainLeft.getWidth(null)+
+                        imgTerrainCentter.getWidth(null)*2,
                 400,null);
 
         g2d.drawImage(imgTerrainLeft, 440, 270, null);
