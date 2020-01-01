@@ -11,14 +11,11 @@ import java.util.Random;
 
 public class GameManager {
     private ArrayList<Cloud> arrCloud;
-    private ArrayList<Boss> arrBosses;
-    private ArrayList<Bullet> arrBullet;
-    private ArrayList<Integer> viTriX;
-    private ArrayList<Integer> viTriY;
+    private Boss boss;
     private Bullet bullet;
     private TankPlayer tankPlayer;
-    private boolean khaiHoa = true;
-    private boolean loadTank = true;
+    private boolean loadTank = false;
+    public static boolean khaiHoa = true;
     private int soLanVeMay;
     private int soLanVeTank;
     private float t;
@@ -27,11 +24,11 @@ public class GameManager {
 
     public void initGame() {
         arrCloud = new ArrayList<>();
-        arrBosses = new ArrayList<>();
-        arrBullet = new ArrayList<>();
+        boss = new Boss();
+
         bullet = new Bullet();
         tankPlayer = new TankPlayer();
-        tankPlayer.setToaDo(100,370);
+        tankPlayer.setToaDo(100, 370);
     }
 
     private void initCloud() {
@@ -40,15 +37,9 @@ public class GameManager {
         }
     }
 
-    private void initBoss() {
-        if (arrBosses.size() < 1) {
-            arrBosses.add(new Boss());
-        }
-    }
 
-    public void dieuKienTank(int orient){
+    public void dieuKienTank(int orient) {
 
-        loadTank =false;
         tankPlayer.setOrient(orient);
         tankPlayer.move();
     }
@@ -65,23 +56,25 @@ public class GameManager {
             i++;
         }
 
-        for (Boss b : arrBosses) {
-            if (soLanVeTank == 0) {
-                b.setToaDo(hoanhDo, tungDo);
-            }
-            soLanVeTank++;
-            b.draw(g2d);
+        if (soLanVeTank == 0) {
+            boss.setToaDo(hoanhDo, tungDo);
         }
+        soLanVeTank++;
+        boss.draw(g2d);
 
         tankPlayer.draw(g2d);
     }
 
     public void bossFire() {
         if (khaiHoa) {
-            bullet.setToaDo(hoanhDo, tungDo);
+            t = 0;
             bullet.createOrient();
+            int k = Bullet.gocBan;
+            bullet.setToaDo(
+                    (int) (boss.getX() - 35 * Math.cos(Math.toRadians(k))),
+                    (int) (boss.getY()-35*Math.sin(Math.toRadians(k))));
         }
-        t=t+1f;
+        t = t + 1f;
         bullet.setT((int) t);
         khaiHoa = false;
         bullet.move();
@@ -99,10 +92,7 @@ public class GameManager {
     }
 
     public void moveBoss() {
-        initBoss();
-        for (Boss b : arrBosses) {
-            b.createOrient();
-            b.move();
-        }
+        boss.createOrient();
+        boss.move();
     }
 }

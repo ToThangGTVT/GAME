@@ -15,6 +15,8 @@ public class GPanel extends JPanel implements KeyListener {
     public boolean[] flag = new boolean[256];
     private TankPlayer tankPlayer;
     private GameManager gameManager = new GameManager();
+    private boolean kiemTraBossXuatHien = true;
+    long t;
 
     public GPanel() {
         setBackground(new Color(0x1B262D));
@@ -64,6 +66,10 @@ public class GPanel extends JPanel implements KeyListener {
         public void run() {
             while (true) {
                 repaint();
+                if (kiemTraBossXuatHien){
+                    t= System.currentTimeMillis();
+                }
+                kiemTraBossXuatHien = false;
                 gameManager.moveBoss();
                 try {
                     Thread.sleep(25);
@@ -80,6 +86,8 @@ public class GPanel extends JPanel implements KeyListener {
         public void run() {
             while (true) {
                 repaint();
+                long T = System.currentTimeMillis();
+                if (T - t < 500) continue;
                 gameManager.bossFire();
                 try {
                     Thread.sleep(20);
@@ -102,7 +110,7 @@ public class GPanel extends JPanel implements KeyListener {
                     gameManager.dieuKienTank(Entire.ORIENT_LEFT);
                 }
                 try {
-                    Thread.sleep(15);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

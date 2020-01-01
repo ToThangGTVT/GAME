@@ -58,4 +58,14 @@ public class BackGround {
         g2d.drawImage(imgMuiTenN,250,381,20,20,null);
     }
 
+    public Rectangle getRet(){
+        int w = imgTerrainLeft.getWidth(null)+
+                imgTerrainCentter.getWidth(null)+
+                imgTerrainRight.getWidth(null);
+        int h = imgTerrainCentter.getHeight(null)+
+                imgTerrainCentter.getHeight(null)+
+                imgTerrainRight.getHeight(null);
+        return new Rectangle(50,400,w,h);
+    }
+
 }
