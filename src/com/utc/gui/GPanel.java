@@ -13,9 +13,10 @@ import java.awt.event.KeyListener;
 
 public class GPanel extends JPanel implements KeyListener {
     public boolean[] flag = new boolean[256];
-    private TankPlayer tankPlayer;
     private GameManager gameManager = new GameManager();
     private boolean kiemTraBossXuatHien = true;
+    private int lucF;
+    private boolean canNong;
     long t;
 
     public GPanel() {
@@ -31,7 +32,6 @@ public class GPanel extends JPanel implements KeyListener {
         t3.start();
         Thread t4 = new Thread(r4);
         t4.start();
-
     }
 
     @Override
@@ -39,7 +39,6 @@ public class GPanel extends JPanel implements KeyListener {
         Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g2d);
         gameManager.draw(g2d);
-        Bullet.drawBullet(g2d);
     }
 
     Runnable r = new Runnable() {
@@ -81,10 +80,21 @@ public class GPanel extends JPanel implements KeyListener {
         @Override
         public void run() {
             while (true) {
-                repaint();
                 long T = System.currentTimeMillis();
                 if (T - t < 500) continue;
                 gameManager.bossFire();
+                repaint();
+                if (flag[KeyEvent.VK_SPACE]) {
+                    canNong = true;
+                    lucF++;
+                    gameManager.canLuc(lucF);
+                }
+                if (!flag[KeyEvent.VK_SPACE] && canNong){
+                    gameManager.playerBatDauBan();
+                    canNong=false;
+                    lucF = 0;
+                }
+                gameManager.playerFire();
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -94,17 +104,25 @@ public class GPanel extends JPanel implements KeyListener {
         }
     };
 
-    Runnable r4 = new Runnable() {
+    final Runnable r4 = new Runnable() {
         @Override
         public void run() {
             while (true) {
                 repaint();
-                if (flag[KeyEvent.VK_RIGHT] || flag[KeyEvent.VK_D]) {
+                if (flag[KeyEvent.VK_D]) {
                     gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
                     gameManager.diChuyenBackGroundTrai();
-                } else if (flag[KeyEvent.VK_LEFT] || flag[KeyEvent.VK_A]) {
+                } else if (flag[KeyEvent.VK_A]) {
                     gameManager.dieuKienTank(Entire.ORIENT_LEFT);
                     gameManager.diChuyenBackGroundPhai();
+                }
+
+                if (flag[KeyEvent.VK_LEFT]) {
+                    gameManager.xoayNong(KeyEvent.VK_LEFT);
+                    gameManager.canGoc();
+                } else if (flag[KeyEvent.VK_RIGHT]) {
+                    gameManager.xoayNong(KeyEvent.VK_RIGHT);
+                    gameManager.canGoc();
                 }
                 gameManager.roiTuDo();
                 try {
@@ -112,15 +130,12 @@ public class GPanel extends JPanel implements KeyListener {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     };
 
-
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override

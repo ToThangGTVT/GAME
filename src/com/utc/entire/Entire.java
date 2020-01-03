@@ -5,12 +5,13 @@ import java.awt.*;
 public abstract class Entire {
     public static final int ORIENT_LEFT = 0;
     public static final int ORIENT_RIGHT = 1;
-    protected int x;
-    protected int y;
+    public int x;
+    public int y;
     protected int orient;
     protected abstract void createOrient();
     protected abstract void move();
     public abstract void draw(Graphics2D g2d);
+    public abstract Rectangle getRet();
 
     protected void doiNguocHuong() {
         switch (orient) {
@@ -38,5 +39,9 @@ public abstract class Entire {
 
     public int getY() {
         return y;
+    }
+
+    public void setOrient(int orient) {
+        this.orient = orient;
     }
 }

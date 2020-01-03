@@ -50,4 +50,9 @@ public class Cloud extends Entire {
         g2d.drawImage(imgCloud, x, y, null);
     }
 
+    @Override
+    public Rectangle getRet() {
+        return null;
+    }
+
 }
