@@ -13,6 +13,7 @@ public class BackGround {
     private Image imgMuiTen;
     private Image imgStone;
     private Image imgMuiTenN;
+    private Image imgHeart;
     private Image imgMoon;
     private int x;
 

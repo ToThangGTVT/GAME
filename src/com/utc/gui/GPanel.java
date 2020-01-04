@@ -14,8 +14,7 @@ import java.awt.event.KeyListener;
 public class GPanel extends JPanel implements KeyListener {
     public boolean[] flag = new boolean[256];
     private GameManager gameManager = new GameManager();
-    private boolean kiemTraBossXuatHien = true;
-    private int lucF;
+    private int lucF2;
     private boolean canNong;
     long t;
 
@@ -24,14 +23,17 @@ public class GPanel extends JPanel implements KeyListener {
         setFocusable(true);
         addKeyListener(this);
         gameManager.initGame();
-        Thread t = new Thread(r);
-        t.start();
+        GameManager.pauseGame = false;
+        Thread t1 = new Thread(r);
+        t1.start();
         Thread t2 = new Thread(r2);
         t2.start();
         Thread t3 = new Thread(r3);
         t3.start();
         Thread t4 = new Thread(r4);
         t4.start();
+        Thread t5 = new Thread(r5);
+        t5.start();
     }
 
     @Override
@@ -41,6 +43,9 @@ public class GPanel extends JPanel implements KeyListener {
         gameManager.draw(g2d);
     }
 
+    /**
+     * Vẽ đám mây di chuyển
+     * */
     Runnable r = new Runnable() {
         @Override
         public void run() {
@@ -56,45 +61,33 @@ public class GPanel extends JPanel implements KeyListener {
         }
     };
 
+    /**
+     * Di chuyển boss
+     * */
     Runnable r2 = new Runnable() {
         @Override
         public void run() {
             while (true) {
                 repaint();
-                if (kiemTraBossXuatHien){
-                    t= System.currentTimeMillis();
-                }
-                kiemTraBossXuatHien = false;
                 gameManager.moveBoss();
                 try {
                     Thread.sleep(25);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     };
 
+    /*
+    * Boss bắn đạn, đạn bay
+    * */
     Runnable r3 = new Runnable() {
         @Override
         public void run() {
             while (true) {
-                long T = System.currentTimeMillis();
-                if (T - t < 500) continue;
-                gameManager.bossFire();
                 repaint();
-                if (flag[KeyEvent.VK_SPACE]) {
-                    canNong = true;
-                    lucF++;
-                    gameManager.canLuc(lucF);
-                }
-                if (!flag[KeyEvent.VK_SPACE] && canNong){
-                    gameManager.playerBatDauBan();
-                    canNong=false;
-                    lucF = 0;
-                }
-                gameManager.playerFire();
+                gameManager.bossFire();
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -104,10 +97,14 @@ public class GPanel extends JPanel implements KeyListener {
         }
     };
 
-    final Runnable r4 = new Runnable() {
+
+    /*
+    * Người chơi di chuyển trái phải
+    * */
+    Runnable r4 = new Runnable() {
         @Override
         public void run() {
-            while (true) {
+            while (GameManager.pauseGame == false) {
                 repaint();
                 if (flag[KeyEvent.VK_D]) {
                     gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
@@ -116,7 +113,6 @@ public class GPanel extends JPanel implements KeyListener {
                     gameManager.dieuKienTank(Entire.ORIENT_LEFT);
                     gameManager.diChuyenBackGroundPhai();
                 }
-
                 if (flag[KeyEvent.VK_LEFT]) {
                     gameManager.xoayNong(KeyEvent.VK_LEFT);
                     gameManager.canGoc();
@@ -127,6 +123,34 @@ public class GPanel extends JPanel implements KeyListener {
                 gameManager.roiTuDo();
                 try {
                     Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    /*
+    * Người chơi bắn đạn, đạn bay
+    * */
+    Runnable r5 = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                repaint();
+                if (flag[KeyEvent.VK_SPACE]) {
+                    canNong = true;
+                    lucF2++;
+                    gameManager.canLuc(lucF2);
+                }
+                if (!flag[KeyEvent.VK_SPACE] && canNong) {
+                    gameManager.playerBatDauBan();
+                    canNong = false;
+                    lucF2 = 0;
+                }
+                gameManager.playerFire();
+                try {
+                    Thread.sleep(20);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

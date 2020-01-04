@@ -2,16 +2,21 @@ package com.utc.manager;
 
 import com.utc.background.BackGround;
 import com.utc.background.Cloud;
+import com.utc.entire.Tank;
 import com.utc.gui.GFrame;
+import com.utc.gui.GPanel;
 import com.utc.modal.Boss;
 import com.utc.modal.Bullet;
 import com.utc.modal.TankPlayer;
 
+import javax.sound.midi.MidiFileFormat;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class GameManager {
     private ArrayList<Cloud> arrCloud;
@@ -22,16 +27,19 @@ public class GameManager {
     private boolean roiTudo;
     public static boolean khaiHoa = true;
     public static boolean playerKhaiHoa = true;
-    private static boolean playerBatDauBan;
+    public static boolean playerBatDauBan;
     private int soLanVeMay;
     private boolean soLanVeTank = true;
     private boolean viTriRoi;
-    private float t;
-    private float t2;
-    private int lucF = 0;
+    public static float t;
+    public static float t2;
+    public static int lucF = 0;
     private float goc = 90;
     int hoanhDo = (int) (460 + Math.random() * 140);
     int tungDo = 240;
+    public static boolean pauseGame;
+    public boolean nguoiChoiChet;
+    private Image imgHeart = LoadUtils.getImage("—Pngtree—vector heart icon_4183857.png");
 
     public void initGame() {
         backGround = new BackGround();
@@ -84,7 +92,7 @@ public class GameManager {
         }
         soLanVeTank = false;
         boss.draw(g2d);
-        tankPlayer.draw(g2d);
+        if (nguoiChoiChet == false) tankPlayer.draw(g2d);
         arrBullet.get(0).draw(g2d);
         arrBullet.get(1).draw(g2d);
 
@@ -99,12 +107,19 @@ public class GameManager {
         g2d.setStroke(new BasicStroke(2));
         g2d.drawRect(5, 20, 200, 10);
         if (goc > 90) {
-            g2d.fillRect(105, 20, (int) (goc-100), 10);
+            g2d.fillRect(105, 20, (int) (goc - 100), 10);
         } else {
-            g2d.fillRect((int) (goc), 20, (int) (100-goc), 10);
+            g2d.fillRect((int) (goc), 20, (int) (100 - goc), 10);
         }
 
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
+        g2d.drawImage(imgHeart, 5, 35, null);
+        g2d.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        g2d.setColor(new Color(0xD5D5D5));
+        g2d.drawString(String.valueOf(tankPlayer.getHeart()), 33, 53);
     }
 
     public void roiTuDo() {
@@ -124,22 +139,35 @@ public class GameManager {
         }
     }
 
-    public void bossFire() {
-        if (khaiHoa) {
-            t = 0;
-            arrBullet.get(0).createOrient();
-            int k = Bullet.gocBan;
-            arrBullet.get(0).setvBullet(300);
-            arrBullet.get(0).setToaDo(
-                    (int) (boss.getX() - 35 * Math.cos(Math.toRadians(k))),
-                    (int) (boss.getY() - 35 * Math.sin(Math.toRadians(k))));
-        }
+    /**
+     * boss bắn
+     * */
+    public void bossFire(){
+        boss.bossFire(khaiHoa,arrBullet.get(0), (int) t);
         t++;
-        arrBullet.get(0).setT((int) t);
-        khaiHoa = false;
-        arrBullet.get(0).move();
-        if (arrBullet.get(0).checkMap(backGround)) {
-            khaiHoa = true;
+        if (arrBullet.get(0).checkDie(tankPlayer)) {
+            nguoiChoiChet = true;
+            tankPlayer.setHeart(tankPlayer.getHeart() - 1);
+            tankPlayer.setToaDo(-100,-100);
+            arrBullet.get(0).setToaDo(-200,-200);
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            nguoiChoiChet = false;
+            tankPlayer = new TankPlayer();
+            tankPlayer.setToaDo(100, 370);
+            if (tankPlayer.getHeart()==0){
+                pauseGame = true;
+                tankPlayer = new TankPlayer();
+                if (JOptionPane.showConfirmDialog(
+                        null,
+                        "Thôi đi ngủ",
+                        "Gameover",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+                    System.exit(0);
+                }
+            }
         }
     }
 
@@ -148,22 +176,18 @@ public class GameManager {
     }
 
     public void playerFire() {
-        if (playerBatDauBan) {
-            if (playerKhaiHoa) {
-                t2 = 0;
-                arrBullet.get(1).setToaDo(tankPlayer.getX(), tankPlayer.getY());
-                arrBullet.get(1).setOrient(tankPlayer.getAngle());
-                arrBullet.get(1).setvBullet(320 * lucF / 100);
+        tankPlayer.playerFire(arrBullet.get(1));
+        t2++;
+        if (arrBullet.get(1).checkWin(boss)) {
+            boss.setToaDo(-100, -100);
+            arrBullet.get(1).setToaDo(-100, -100);
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            t2++;
-            playerKhaiHoa = false;
-            arrBullet.get(1).setT((int) t2);
-            arrBullet.get(1).move();
-            if (arrBullet.get(1).checkMap(backGround)) {
-                playerKhaiHoa = true;
-                playerBatDauBan = false;
-                arrBullet.get(1).setToaDo(-10, -10);
-            }
+            boss = new Boss();
+            boss.setToaDo(hoanhDo, tungDo);
         }
     }
 
@@ -200,13 +224,13 @@ public class GameManager {
     }
 
     public void canLuc(int lucF) {
-        this.lucF = lucF * 2;
+        GameManager.lucF = lucF * 2;
     }
 
-    public void canGoc(){
+    public void canGoc() {
         int gocTrungGian = tankPlayer.getAngle();
-        if (gocTrungGian>150) gocTrungGian =148;
-        if (gocTrungGian<30) gocTrungGian = 30;
-        this.goc = (gocTrungGian-27)/0.6f;
+        if (gocTrungGian > 150) gocTrungGian = 148;
+        if (gocTrungGian < 30) gocTrungGian = 30;
+        this.goc = (gocTrungGian - 27) / 0.6f;
     }
 }

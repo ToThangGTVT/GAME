@@ -62,17 +62,25 @@ public class Bullet extends Entire {
         return false;
     }
 
+    public boolean checkDie(TankPlayer tankPlayer){
+        Rectangle ret = tankPlayer.getRet().intersection(getRet());
+        if (!ret.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkWin(Boss boss){
+        Rectangle ret = boss.getRet().intersection(getRet());
+        if (!ret.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
     public Rectangle getRet() {
         int w = imgBullet.getWidth(null);
         int h = imgBullet.getHeight(null);
-        return new Rectangle(xBullet, yBullet, w, h);
-    }
-
-    public int getxBullet() {
-        return xBullet;
-    }
-
-    public int getyBullet() {
-        return yBullet;
+        return new Rectangle(xBullet, yBullet, 10, 10);
     }
 }
