@@ -10,13 +10,14 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 
-public class Boss extends Tank {
+public class BossTank extends Tank {
     private Bullet bullet;
     private static Image imgBanhXe = LoadUtils.getImage("tanks_tankTracks1.png");
     private static Image imgThanXe = LoadUtils.getImage("tanks_tankDesert_body1.png");
 
-    public Boss() {
+    public BossTank() {
         this.x = 100;
         this.y = -100;
     }
@@ -65,7 +66,11 @@ public class Boss extends Tank {
         if (bullet.checkMap(new BackGround())) {
             GameManager.khaiHoa = true;
             GameManager.t = 0;
-
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -52,6 +52,8 @@ public class GPanel extends JPanel implements KeyListener {
             while (true) {
                 repaint();
                 gameManager.moveCloud();
+                gameManager.bossBayMove();
+                gameManager.bossBayFire();
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {

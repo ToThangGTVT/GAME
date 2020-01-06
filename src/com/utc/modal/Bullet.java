@@ -51,6 +51,7 @@ public class Bullet extends Entire {
 
     @Override
     public void draw(Graphics2D g2d) {
+        imgBullet = LoadUtils.getImage("tank_explosion5.png");
         g2d.drawImage(imgBullet, this.xBullet, this.yBullet, 10, 10, null);
     }
 
@@ -70,8 +71,8 @@ public class Bullet extends Entire {
         return false;
     }
 
-    public boolean checkWin(Boss boss){
-        Rectangle ret = boss.getRet().intersection(getRet());
+    public boolean checkWin(BossTank bossTank){
+        Rectangle ret = bossTank.getRet().intersection(getRet());
         if (!ret.isEmpty()){
             return true;
         }

@@ -13,6 +13,7 @@ public class TankPlayer extends Tank {
     private int t = 0;
     private int angle = 120;
     private static int heart=5;
+    private static int score;
     private static Image imgNongSungPlayer = LoadUtils.getImage("tanks_turret1.png");
     private static Image imgBanhXePlayer = LoadUtils.getImage("tanks_tankTracks1.png");
     private static Image imgThanXePlayer = LoadUtils.getImage("tanks_tankNavy_body1.png");
@@ -26,6 +27,14 @@ public class TankPlayer extends Tank {
 
     public int getHeart() {
         return heart;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        TankPlayer.score = score;
     }
 
     public void setHeart(int heart) {

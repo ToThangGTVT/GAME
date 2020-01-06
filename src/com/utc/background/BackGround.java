@@ -13,7 +13,6 @@ public class BackGround {
     private Image imgMuiTen;
     private Image imgStone;
     private Image imgMuiTenN;
-    private Image imgHeart;
     private Image imgMoon;
     private int x;
 
@@ -65,11 +64,9 @@ public class BackGround {
 
     public Rectangle getRet(){
         int w = imgTerrainLeft.getWidth(null)+
-                imgTerrainCentter.getWidth(null)+
+                imgTerrainCentter.getWidth(null)*2+
                 imgTerrainRight.getWidth(null);
-        int h = imgTerrainCentter.getHeight(null)+
-                imgTerrainCentter.getHeight(null)+
-                imgTerrainRight.getHeight(null);
+        int h = imgTerrainCentter.getHeight(null);
         return new Rectangle(50,400,w,h);
     }
 

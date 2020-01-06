@@ -2,25 +2,20 @@ package com.utc.manager;
 
 import com.utc.background.BackGround;
 import com.utc.background.Cloud;
-import com.utc.entire.Tank;
 import com.utc.gui.GFrame;
-import com.utc.gui.GPanel;
-import com.utc.modal.Boss;
-import com.utc.modal.Bullet;
-import com.utc.modal.TankPlayer;
+import com.utc.modal.*;
 
-import javax.sound.midi.MidiFileFormat;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class GameManager {
     private ArrayList<Cloud> arrCloud;
-    private Boss boss;
+    private ArrayList<BossBay> arrBossBay;
+    private ArrayList<BulletDrop> arrBulletDrop;
+    private BossTank bossTank;
     private ArrayList<Bullet> arrBullet;
     private TankPlayer tankPlayer;
     private BackGround backGround;
@@ -39,14 +34,20 @@ public class GameManager {
     int tungDo = 240;
     public static boolean pauseGame;
     public boolean nguoiChoiChet;
-    private Image imgHeart = LoadUtils.getImage("—Pngtree—vector heart icon_4183857.png");
+    public boolean thaBom;
+    private Image imgHeart = LoadUtils.getImage("platformPack_item017.png");
+    private Image imgTankFired = LoadUtils.getImage("tanks_tankDesert1.png");
 
     public void initGame() {
         backGround = new BackGround();
+        arrBossBay = new ArrayList<>();
         arrCloud = new ArrayList<>();
-        boss = new Boss();
+        bossTank = new BossTank();
         arrBullet = new ArrayList<>();
+        arrBulletDrop = new ArrayList<>();
         initBullet();
+        initBossBay();
+        initBulletDrop();
         tankPlayer = new TankPlayer();
         tankPlayer.setToaDo(100, 370);
     }
@@ -60,6 +61,34 @@ public class GameManager {
     private void initBullet() {
         for (int i = 0; i < 2; i++) {
             arrBullet.add(new Bullet());
+        }
+    }
+
+    private void initBossBay(){
+        Random rnd  = new Random();
+        for (int i = 0; i < 2; i++) {
+            int a = rnd.nextInt(200)+100;
+            arrBossBay.add(new BossBay(
+                    rnd.nextInt(200)+10,
+                    rnd.nextInt(50),
+                    a,
+                    rnd.nextInt(120)+80,
+                    rnd.nextInt(2*a)-a));
+        }
+    }
+
+    public void initBulletDrop(){
+        for (int i = 0; i < 2; i++) {
+            arrBulletDrop.add(new BulletDrop(
+                    arrBossBay.get(i).getToaDoX(),
+                    arrBossBay.get(i).getToaDoY()));
+        }
+    }
+
+    public void bossBayFire(){
+        for (BulletDrop bd : arrBulletDrop) {
+            bd.move();
+            bd.checkMap(backGround);
         }
     }
 
@@ -88,12 +117,15 @@ public class GameManager {
             i++;
         }
         if (soLanVeTank) {
-            boss.setToaDo(hoanhDo, tungDo);
+            bossTank.setToaDo(hoanhDo, tungDo);
         }
         soLanVeTank = false;
-        boss.draw(g2d);
+        bossTank.draw(g2d);
         if (nguoiChoiChet == false) tankPlayer.draw(g2d);
         arrBullet.get(0).draw(g2d);
+        if (!playerBatDauBan){
+            arrBullet.get(1).setToaDo(-20,-20);
+        }
         arrBullet.get(1).draw(g2d);
 
         //thanh căn lực
@@ -111,15 +143,26 @@ public class GameManager {
         } else {
             g2d.fillRect((int) (goc), 20, (int) (100 - goc), 10);
         }
+        g2d.drawImage(imgTankFired, 7, 63, 21, 17, null);
 
         g2d.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2d.drawImage(imgHeart, 5, 35, null);
+        g2d.drawImage(imgHeart, -5, 25, null);
         g2d.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         g2d.setColor(new Color(0xD5D5D5));
-        g2d.drawString(String.valueOf(tankPlayer.getHeart()), 33, 53);
+        g2d.drawString(String.valueOf(tankPlayer.getHeart()), 35, 53);
+        g2d.drawString(String.valueOf(tankPlayer.getScore()), 35, 77);
+
+        for (BossBay bb : arrBossBay) {
+            bb.draw(g2d);
+        }
+        if (thaBom){
+            for (BulletDrop bd: arrBulletDrop) {
+                bd.draw(g2d);
+            }
+        }
     }
 
     public void roiTuDo() {
@@ -139,17 +182,23 @@ public class GameManager {
         }
     }
 
+    public void bossBayMove(){
+        for (BossBay bb: arrBossBay) {
+            bb.move();
+        }
+    }
+
     /**
      * boss bắn
-     * */
-    public void bossFire(){
-        boss.bossFire(khaiHoa,arrBullet.get(0), (int) t);
+     */
+    public void bossFire() {
+        bossTank.bossFire(khaiHoa, arrBullet.get(0), (int) t);
         t++;
         if (arrBullet.get(0).checkDie(tankPlayer)) {
             nguoiChoiChet = true;
             tankPlayer.setHeart(tankPlayer.getHeart() - 1);
-            tankPlayer.setToaDo(-100,-100);
-            arrBullet.get(0).setToaDo(-200,-200);
+            tankPlayer.setToaDo(-100, -100);
+            arrBullet.get(0).setToaDo(-200, -200);
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
@@ -158,13 +207,13 @@ public class GameManager {
             nguoiChoiChet = false;
             tankPlayer = new TankPlayer();
             tankPlayer.setToaDo(100, 370);
-            if (tankPlayer.getHeart()==0){
+            if (tankPlayer.getHeart() == 0) {
                 pauseGame = true;
                 tankPlayer = new TankPlayer();
                 if (JOptionPane.showConfirmDialog(
                         null,
                         "Thôi đi ngủ",
-                        "Gameover",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+                        "Gameover", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
             }
@@ -178,16 +227,17 @@ public class GameManager {
     public void playerFire() {
         tankPlayer.playerFire(arrBullet.get(1));
         t2++;
-        if (arrBullet.get(1).checkWin(boss)) {
-            boss.setToaDo(-100, -100);
+        if (arrBullet.get(1).checkWin(bossTank)) {
+            tankPlayer.setScore(tankPlayer.getScore()+1);
+            bossTank.setToaDo(-100, -100);
             arrBullet.get(1).setToaDo(-100, -100);
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            boss = new Boss();
-            boss.setToaDo(hoanhDo, tungDo);
+            bossTank = new BossTank();
+            bossTank.setToaDo(hoanhDo, tungDo);
         }
     }
 
@@ -203,8 +253,8 @@ public class GameManager {
     }
 
     public void moveBoss() {
-        boss.createOrient();
-        boss.move();
+        bossTank.createOrient();
+        bossTank.move();
     }
 
     public void diChuyenBackGroundTrai() {
