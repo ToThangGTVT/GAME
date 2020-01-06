@@ -80,8 +80,6 @@ public class Bullet extends Entire {
     }
 
     public Rectangle getRet() {
-        int w = imgBullet.getWidth(null);
-        int h = imgBullet.getHeight(null);
         return new Rectangle(xBullet, yBullet, 10, 10);
     }
 }

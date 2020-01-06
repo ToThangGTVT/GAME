@@ -42,14 +42,13 @@ public class BossBay extends Entire {
             x--;
             if (x == -a) dinhElip = false;
         }
-        y = (int) (b * Math.sqrt(a * a - (x * x) / 2f) / a);
+        y = (int) (b * Math.sqrt(a * a - (x * x)/1.7f) / a);
     }
 
     @Override
     public void draw(Graphics2D g2d) {
         Image imagePlan = LoadUtils.getImage("flyMan_still_jump.png");
         g2d.drawImage(imagePlan, x + xPlan, y + yPlan, null);
-
     }
 
     @Override

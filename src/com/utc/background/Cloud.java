@@ -11,6 +11,11 @@ public class Cloud extends Entire {
     private static Image imgCloud = LoadUtils.getImage("forest_pack_107.png");;
     protected int soLanDoiHuong;
 
+    public Cloud(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public int getSoLanDoiHuong() {
         return soLanDoiHuong;
     }

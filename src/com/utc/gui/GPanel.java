@@ -17,6 +17,7 @@ public class GPanel extends JPanel implements KeyListener {
     private int lucF2;
     private boolean canNong;
     long t;
+    private boolean lanDauThaBom;
 
     public GPanel() {
         setBackground(new Color(0x1B262D));
@@ -34,6 +35,8 @@ public class GPanel extends JPanel implements KeyListener {
         t4.start();
         Thread t5 = new Thread(r5);
         t5.start();
+        Thread t6 = new Thread(r6);
+        t6.start();
     }
 
     @Override
@@ -45,7 +48,7 @@ public class GPanel extends JPanel implements KeyListener {
 
     /**
      * Vẽ đám mây di chuyển
-     * */
+     */
     Runnable r = new Runnable() {
         @Override
         public void run() {
@@ -53,7 +56,6 @@ public class GPanel extends JPanel implements KeyListener {
                 repaint();
                 gameManager.moveCloud();
                 gameManager.bossBayMove();
-                gameManager.bossBayFire();
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
@@ -65,7 +67,7 @@ public class GPanel extends JPanel implements KeyListener {
 
     /**
      * Di chuyển boss
-     * */
+     */
     Runnable r2 = new Runnable() {
         @Override
         public void run() {
@@ -82,8 +84,8 @@ public class GPanel extends JPanel implements KeyListener {
     };
 
     /*
-    * Boss bắn đạn, đạn bay
-    * */
+     * Boss bắn đạn, đạn bay
+     * */
     Runnable r3 = new Runnable() {
         @Override
         public void run() {
@@ -101,8 +103,8 @@ public class GPanel extends JPanel implements KeyListener {
 
 
     /*
-    * Người chơi di chuyển trái phải
-    * */
+     * Người chơi di chuyển trái phải
+     * */
     Runnable r4 = new Runnable() {
         @Override
         public void run() {
@@ -133,8 +135,8 @@ public class GPanel extends JPanel implements KeyListener {
     };
 
     /*
-    * Người chơi bắn đạn, đạn bay
-    * */
+     * Người chơi bắn đạn, đạn bay
+     * */
     Runnable r5 = new Runnable() {
         @Override
         public void run() {
@@ -159,6 +161,31 @@ public class GPanel extends JPanel implements KeyListener {
             }
         }
     };
+
+    Runnable r6 = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                long T = System.currentTimeMillis();
+                if (T - t >= 5000 && !GameManager.thaBom) {
+                    if (lanDauThaBom){
+                        GameManager.thaBom = true;
+                        gameManager.setAllTrungDanFalse();
+                    }
+                    t = T;
+                }
+                lanDauThaBom= true;
+                gameManager.bossBayFire();
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+
 
     @Override
     public void keyTyped(KeyEvent e) {

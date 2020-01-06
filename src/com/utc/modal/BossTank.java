@@ -17,9 +17,9 @@ public class BossTank extends Tank {
     private static Image imgBanhXe = LoadUtils.getImage("tanks_tankTracks1.png");
     private static Image imgThanXe = LoadUtils.getImage("tanks_tankDesert_body1.png");
 
-    public BossTank() {
-        this.x = 100;
-        this.y = -100;
+    public BossTank(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     @Override
