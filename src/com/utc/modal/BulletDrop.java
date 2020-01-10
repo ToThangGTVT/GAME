@@ -13,10 +13,35 @@ public class BulletDrop extends Entire {
     private int xBullet;
     private int yBullet;
     private boolean trungDan;
+    private long timeExplosive;
+    private boolean visible;
+
+    public BulletDrop(int xBullet, int yBullet) {
+        this.xBullet = xBullet;
+        this.yBullet = yBullet;
+        visible= true;
+    }
+
+    public long getTimeExplosive() {
+        return timeExplosive;
+    }
+
+    public void setTimeExplosive(long timeExplosive) {
+        this.timeExplosive = timeExplosive;
+    }
 
     public void setToaDo(int x, int y) {
         this.xBullet = x;
         this.yBullet = y;
+        this.visible = true;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     public boolean isTrungDan() {
@@ -43,7 +68,7 @@ public class BulletDrop extends Entire {
     @Override
     public void move() {
         t++;
-        y =(int) (4.905 * t * t) / 1000;
+        y =(int) (4.905 * t * t) / 500;
     }
 
 
@@ -59,7 +84,17 @@ public class BulletDrop extends Entire {
 
     public boolean checkMap(BackGround bg) {
         Rectangle ret = bg.getRet().intersection(getRet());
-        if (!ret.isEmpty() || xBullet < 0 || yBullet+this.y > GFrame.H_FRAME) {
+        if (!ret.isEmpty()) {
+            return true;
+        } else if (xBullet < 0 || yBullet+this.y > GFrame.H_FRAME){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkDie(TankPlayer tankPlayer){
+        Rectangle ret = tankPlayer.getRet().intersection(getRet());
+        if (!ret.isEmpty()){
             return true;
         }
         return false;

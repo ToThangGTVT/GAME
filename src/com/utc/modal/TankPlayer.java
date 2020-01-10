@@ -12,17 +12,30 @@ import java.awt.event.KeyEvent;
 public class TankPlayer extends Tank {
     private int t = 0;
     private int angle = 120;
-    private static int heart=5;
-    private static int score;
+    public static boolean die;
+    public static int heart=500000;
+    public static int score;
     private static Image imgNongSungPlayer = LoadUtils.getImage("tanks_turret1.png");
     private static Image imgBanhXePlayer = LoadUtils.getImage("tanks_tankTracks1.png");
     private static Image imgThanXePlayer = LoadUtils.getImage("tanks_tankNavy_body1.png");
+
+    public TankPlayer() {
+        die = false;
+    }
 
     @Override
     public void draw(Graphics2D g2d) {
         xoayNong(LoadUtils.convertToBufferedImage(imgNongSungPlayer), g2d, x, y - 20, angle);
         g2d.drawImage(imgBanhXePlayer, x - 15, y + 13, null);
         g2d.drawImage(imgThanXePlayer, x - 17, y + 1, 42, 24, null);
+    }
+
+    public boolean isDie() {
+        return die;
+    }
+
+    public void setDie(boolean die) {
+        this.die = die;
     }
 
     public int getHeart() {
@@ -68,13 +81,14 @@ public class TankPlayer extends Tank {
         this.angle = angle;
     }
 
+
     public void xoayNong(int phimAn) {
         if (angle > 150) setAngle(150);
         if (angle < 30) setAngle(30);
-        if (phimAn == KeyEvent.VK_LEFT) {
-            angle--;
-        } else if (phimAn == KeyEvent.VK_RIGHT) {
+        if (phimAn == KeyEvent.VK_S) {
             angle++;
+        } else if (phimAn == KeyEvent.VK_W) {
+            angle--;
         }
     }
 

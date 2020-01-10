@@ -11,7 +11,7 @@ public class Player {
     private Image imgHeart = LoadUtils.getImage("platformPack_item017.png");
     private Image imgTankFired = LoadUtils.getImage("tanks_tankDesert1.png");
 
-    public void drawTableScore(Graphics2D g2d, TankPlayer tankPlayer){
+    public void drawTableScore(Graphics2D g2d){
         g2d.setColor(new Color(0x50B450));
         g2d.setStroke(new BasicStroke(2));
         g2d.drawRect(5, 5, 200, 10);
@@ -34,7 +34,7 @@ public class Player {
         g2d.drawImage(imgHeart, -5, 25, null);
         g2d.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         g2d.setColor(new Color(0xD5D5D5));
-        g2d.drawString(String.valueOf(tankPlayer.getHeart()), 35, 53);
-        g2d.drawString(String.valueOf(tankPlayer.getScore()), 35, 77);
+        g2d.drawString(String.valueOf(TankPlayer.heart), 35, 53);
+        g2d.drawString(String.valueOf(TankPlayer.score), 35, 77);
     }
 }

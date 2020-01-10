@@ -79,6 +79,14 @@ public class Bullet extends Entire {
         return false;
     }
 
+    public boolean checkBanTrungBossBay(BossBay bossBay){
+        Rectangle ret = bossBay.getRet().intersection(getRet());
+        if (!ret.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
     public Rectangle getRet() {
         return new Rectangle(xBullet, yBullet, 10, 10);
     }

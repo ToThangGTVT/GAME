@@ -6,10 +6,13 @@ import com.utc.manager.GameManager;
 import com.utc.modal.Bullet;
 import com.utc.modal.TankPlayer;
 
+import javax.sound.midi.MidiFileFormat;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.font.GlyphMetrics;
+import java.util.concurrent.TimeUnit;
 
 public class GPanel extends JPanel implements KeyListener {
     public boolean[] flag = new boolean[256];
@@ -55,7 +58,6 @@ public class GPanel extends JPanel implements KeyListener {
             while (true) {
                 repaint();
                 gameManager.moveCloud();
-                gameManager.bossBayMove();
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
@@ -108,23 +110,35 @@ public class GPanel extends JPanel implements KeyListener {
     Runnable r4 = new Runnable() {
         @Override
         public void run() {
-            while (GameManager.pauseGame == false) {
+            while (!GameManager.pauseGame) {
                 repaint();
-                if (flag[KeyEvent.VK_D]) {
-                    gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
-                    gameManager.diChuyenBackGroundTrai();
-                } else if (flag[KeyEvent.VK_A]) {
-                    gameManager.dieuKienTank(Entire.ORIENT_LEFT);
-                    gameManager.diChuyenBackGroundPhai();
+                if (!GameManager.nguoiChoiChet){
+                    if (flag[KeyEvent.VK_D]) {
+                        gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
+                        gameManager.diChuyenBackGroundTrai();
+                    } else if (flag[KeyEvent.VK_A]) {
+                        gameManager.dieuKienTank(Entire.ORIENT_LEFT);
+                        gameManager.diChuyenBackGroundPhai();
+                    }
+                    if (flag[KeyEvent.VK_W]) {
+                        gameManager.xoayNong(KeyEvent.VK_W);
+                        gameManager.canGoc();
+                    } else if (flag[KeyEvent.VK_S]) {
+                        gameManager.xoayNong(KeyEvent.VK_S);
+                        gameManager.canGoc();
+                    }
+                    gameManager.roiTuDo();
                 }
-                if (flag[KeyEvent.VK_LEFT]) {
-                    gameManager.xoayNong(KeyEvent.VK_LEFT);
-                    gameManager.canGoc();
-                } else if (flag[KeyEvent.VK_RIGHT]) {
-                    gameManager.xoayNong(KeyEvent.VK_RIGHT);
-                    gameManager.canGoc();
+                if (GameManager.nguoiChoiChet){
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    GameManager.nguoiChoiChet = false;
+                    gameManager.initPlayer();
                 }
-                gameManager.roiTuDo();
+
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -166,18 +180,9 @@ public class GPanel extends JPanel implements KeyListener {
         @Override
         public void run() {
             while (true) {
-                long T = System.currentTimeMillis();
-                if (T - t >= 5000 && !GameManager.thaBom) {
-                    if (lanDauThaBom){
-                        GameManager.thaBom = true;
-                        gameManager.setAllTrungDanFalse();
-                    }
-                    t = T;
-                }
-                lanDauThaBom= true;
-                gameManager.bossBayFire();
+                gameManager.bossBayThaBom();
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
