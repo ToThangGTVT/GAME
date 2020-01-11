@@ -19,8 +19,7 @@ public class GPanel extends JPanel implements KeyListener {
     private GameManager gameManager = new GameManager();
     private int lucF2;
     private boolean canNong;
-    long t;
-    private boolean lanDauThaBom;
+    private int indexFrame = 0;
 
     public GPanel() {
         setBackground(new Color(0x1B262D));
@@ -40,6 +39,8 @@ public class GPanel extends JPanel implements KeyListener {
         t5.start();
         Thread t6 = new Thread(r6);
         t6.start();
+        Thread t7 = new Thread(r7);
+        t7.start();
     }
 
     @Override
@@ -112,7 +113,7 @@ public class GPanel extends JPanel implements KeyListener {
         public void run() {
             while (!GameManager.pauseGame) {
                 repaint();
-                if (!GameManager.nguoiChoiChet){
+                if (!GameManager.nguoiChoiChet) {
                     if (flag[KeyEvent.VK_D]) {
                         gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
                         gameManager.diChuyenBackGroundTrai();
@@ -129,7 +130,7 @@ public class GPanel extends JPanel implements KeyListener {
                     }
                     gameManager.roiTuDo();
                 }
-                if (GameManager.nguoiChoiChet){
+                if (GameManager.nguoiChoiChet) {
                     try {
                         TimeUnit.SECONDS.sleep(2);
                     } catch (InterruptedException e) {
@@ -190,6 +191,25 @@ public class GPanel extends JPanel implements KeyListener {
         }
     };
 
+    Runnable r7 = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                gameManager.setIndex(indexFrame);
+                indexFrame++;
+                if (indexFrame > 70) {
+//                    GameManager.explode = false;
+                    indexFrame = 0;
+                    GameManager.explode = false;
+                }
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
 
     @Override

@@ -5,11 +5,9 @@ import com.utc.background.Cloud;
 import com.utc.gui.GFrame;
 import com.utc.modal.*;
 
-import javax.sound.midi.MidiFileFormat;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +37,11 @@ public class GameManager {
     long tBanBossBay;
     long tPlayerDie;
     long TPlayerDie;
+    public static boolean explode = false;
     private int nBossBay = 2;
+    private int index = 0;
+    private int xExplode = 0;
+    private int yExplode = 0;
 
     public void initGame() {
         backGround = new BackGround();
@@ -126,6 +128,9 @@ public class GameManager {
                 bd.draw(g2d);
             }
         }
+        if (explode) {
+            arrBullet.get(0).explosive(g2d, index, xExplode, yExplode);
+        }
     }
 
     public void roiTuDo() {
@@ -156,6 +161,9 @@ public class GameManager {
                 initPlayer();
             }
         } else if (arrBullet.get(0).checkDie(tankPlayer)) {
+            xExplode = tankPlayer.getX() - 50;
+            yExplode = tankPlayer.getY() - 50;
+            explode = true;
             tankPlayer.setHeart(tankPlayer.getHeart() - 1);
             nguoiChoiChet = true;
             tPlayerDie = System.currentTimeMillis();
@@ -171,9 +179,7 @@ public class GameManager {
                     TankPlayer.heart = 5;
                 }
             }
-            tankPlayer = null;
         }
-
     }
 
     public void playerBatDauBan() {
@@ -181,31 +187,33 @@ public class GameManager {
     }
 
     public void playerFire() {
-        if (!nguoiChoiChet) {
-            tankPlayer.playerFire(arrBullet.get(1));
-            t2++;
-            if (arrBullet.get(1).checkWin(bossTank)) {
-                tankPlayer.setScore(tankPlayer.getScore() + 1);
-                bossTank.setToaDo(-100, -100);
-                arrBullet.get(1).setToaDo(-100, -100);
-                tPlayerDie = System.currentTimeMillis();
-                try {
-                    TimeUnit.SECONDS.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                bossTank = new BossTank(hoanhDo, tungDo);
+        tankPlayer.playerFire(arrBullet.get(1));
+        t2++;
+        if (arrBullet.get(1).checkWin(bossTank)) {
+            xExplode = bossTank.getX() - 50;
+            yExplode = bossTank.getY() - 50;
+            explode = true;
+            tankPlayer.setScore(tankPlayer.getScore() + 1);
+            bossTank.setToaDo(-100, -100);
+            arrBullet.get(1).setToaDo(-100, -100);
+            tPlayerDie = System.currentTimeMillis();
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            for (int i = 0; i < nBossBay; i++) {
-                if (arrBullet.get(1).checkBanTrungBossBay(arrBossBay.get(i))) {
-                    for (int j = 1; j >= 0; j--) {
-                        if (i == j) {
-                            arrBossBay.get(j).setTrungDan(true);
-                            arrBossBay.remove(j);
-                            nBossBay--;
-                            tBanBossBay = System.currentTimeMillis();
-                            break;
-                        }
+            bossTank = new BossTank(hoanhDo, tungDo);
+            nguoiChoiChet = false;
+        }
+        for (int i = 0; i < nBossBay; i++) {
+            if (arrBullet.get(1).checkBanTrungBossBay(arrBossBay.get(i))) {
+                for (int j = 1; j >= 0; j--) {
+                    if (i == j) {
+                        arrBossBay.get(j).setTrungDan(true);
+                        arrBossBay.remove(j);
+                        nBossBay--;
+                        tBanBossBay = System.currentTimeMillis();
+                        break;
                     }
                 }
             }
@@ -254,7 +262,7 @@ public class GameManager {
                 if (bd.checkMap(backGround) || bd.checkDie(tankPlayer)) {
                     if (bd.checkDie(tankPlayer)) {
                         nguoiChoiChet = true;
-                        tankPlayer = null;
+                        tPlayerDie = System.currentTimeMillis();
                     }
                     bd.setVisible(false);
                     break;
@@ -309,5 +317,13 @@ public class GameManager {
         if (gocTrungGian > 150) gocTrungGian = 148;
         if (gocTrungGian < 30) gocTrungGian = 30;
         goc = (gocTrungGian - 27) / 0.6f;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

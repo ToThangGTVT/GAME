@@ -5,11 +5,14 @@ import com.utc.entire.Entire;
 import com.utc.gui.GFrame;
 import com.utc.manager.LoadUtils;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class Bullet extends Entire {
     public Image imgBullet = LoadUtils.getImage("tank_explosion5.png");
+    public Image imgBoom = LoadUtils.getImage("tank_explosion5.png");
     private float t;
     private int xBullet;
     private int yBullet;
@@ -38,7 +41,7 @@ public class Bullet extends Entire {
         gocBan = orient;
     }
 
-    public static int getGocBan(){
+    public static int getGocBan() {
         return gocBan;
     }
 
@@ -63,25 +66,25 @@ public class Bullet extends Entire {
         return false;
     }
 
-    public boolean checkDie(TankPlayer tankPlayer){
+    public boolean checkDie(TankPlayer tankPlayer) {
         Rectangle ret = tankPlayer.getRet().intersection(getRet());
-        if (!ret.isEmpty()){
+        if (!ret.isEmpty()) {
             return true;
         }
         return false;
     }
 
-    public boolean checkWin(BossTank bossTank){
+    public boolean checkWin(BossTank bossTank) {
         Rectangle ret = bossTank.getRet().intersection(getRet());
-        if (!ret.isEmpty()){
+        if (!ret.isEmpty()) {
             return true;
         }
         return false;
     }
 
-    public boolean checkBanTrungBossBay(BossBay bossBay){
+    public boolean checkBanTrungBossBay(BossBay bossBay) {
         Rectangle ret = bossBay.getRet().intersection(getRet());
-        if (!ret.isEmpty()){
+        if (!ret.isEmpty()) {
             return true;
         }
         return false;
@@ -89,5 +92,14 @@ public class Bullet extends Entire {
 
     public Rectangle getRet() {
         return new Rectangle(xBullet, yBullet, 10, 10);
+    }
+
+    public void explosive(Graphics2D g2d, int i, int x, int y ) {
+        String strIndex = "";
+        strIndex = String.valueOf(i);
+        if (i < 10) strIndex = "0" + strIndex;
+        strIndex = strIndex + ".png";
+        Image imgExplode = LoadUtils.getImage("explode/frame00" + strIndex);
+        g2d.drawImage(imgExplode, x, y, null);
     }
 }
