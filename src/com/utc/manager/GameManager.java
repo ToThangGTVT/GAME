@@ -12,37 +12,120 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class GameManager {
+
+    /**
+     * Mảng các đám mây
+     * */
     private ArrayList<Cloud> arrCloud;
+
+    /**
+    * Mảng các con boss bay
+    * */
     private ArrayList<BossBay> arrBossBay;
+
+    /**
+     * mảng các đạn rơi từ boss bay.
+     */
     private ArrayList<BulletDrop> arrBulletDrop;
+
+    /**
+     * Đối tượng boss là xa tăng.
+     */
     private BossTank bossTank;
+
+    /**
+     * Mảng chứa đạn của tank boss và player
+     */
     private ArrayList<Bullet> arrBullet;
+
+    /**
+     * Đối tượng tank người chơi
+     * */
     private TankPlayer tankPlayer;
+
+    /**
+     * Đối tượng khung cảnh
+     * */
     private BackGround backGround;
+
+    /**
+     * Kiểm tra tank người chơi có bị rơi khỏi map hay ko
+     * */
     private boolean roiTudo;
-    public static boolean khaiHoa = true;
-    public static boolean playerKhaiHoa = true;
-    public static boolean playerBatDauBan;
+
+    /**
+     * Đánh dấu vị trí bắt đầu tank người chơi rơi khỏi map
+     * */
     private boolean viTriRoi;
-    public static float t;
-    public static float t2;
-    public static int lucF = 0;
-    public static float goc = 90;
-    int hoanhDo = (int) (460 + Math.random() * 140);
-    int tungDo = 240;
-    public static boolean pauseGame;
-    public static boolean nguoiChoiChet = false;
-    public static boolean thaBom = true;
+
+    /**
+     * Hoanh độ nhỏ nhất cho boss tank xuất hiện lại khi chết
+     * */
+    private static final int X_MIN_GEN_AFTER_DIE = 460;
+
+    /**
+     * Độ rộng của map mà boss tank đứng
+     * */
+    private static final int WIDTH_OF_MAP_BOSSTANK = 140;
+
+    /**
+     * Vị trí hoành độ ban đầu xuất hiện và xuất hiện sau khi chết.
+     * */
+    private int hoanhDo = (int) (X_MIN_GEN_AFTER_DIE + Math.random() * WIDTH_OF_MAP_BOSSTANK);
+
+    /**
+     * Vị trí tung độ ban đầu xuất hiện và xuất hiện sau khi chết.
+     * */
+    private int tungDo = 240;
+
+    /**
+     * Kiểm tra khi người chơi hết mạng và dừng game.
+     * */
+    private boolean pauseGame;
+
+    /**
+     * Kiểm tra khi boss bay thả bom xuống
+     * */
+    private boolean thaBom = true;
+
+    /**
+     * Khởi tạo bảng đếm số
+     * */
     private Player player = new Player();
+
+
     long tBanBossBay;
     long tPlayerDie;
     long TPlayerDie;
-    public static boolean explode = false;
+
+    /**
+     * check đạn nổ khi bị bắn trúng
+     * */
+    private boolean explode = false;
+
+    /**
+     * số lượng boss bay trên màn hình
+     * */
     private int nBossBay = 2;
+
+    /**
+     * thứ tự frame của hiệu ứng đạn nổ
+     * */
     private int index = 0;
+
+    /**
+     * hoành độ của đạn nổ
+     * */
     private int xExplode = 0;
+
+    /**
+     * tung độ của đạn nổ
+     * */
     private int yExplode = 0;
 
+    /**
+     * khởi tạo game
+     * */
     public void initGame() {
         backGround = new BackGround();
         arrBossBay = new ArrayList<>();
@@ -56,6 +139,9 @@ public class GameManager {
         initPlayer();
     }
 
+    /**
+     * khởi tạo đám mây
+     * */
     private void initCloud() {
         Random rnd = new Random();
         for (int i = 0; i < 2; i++) {
@@ -63,16 +149,25 @@ public class GameManager {
         }
     }
 
+    /**
+     * khởi tạo đạn
+     * */
     private void initBullet() {
         for (int i = 0; i < 2; i++) {
             arrBullet.add(new Bullet());
         }
     }
 
+    /**
+     * khởi tạo boss là tank
+     * */
     private void initBossTank() {
         bossTank = new BossTank(hoanhDo, tungDo);
     }
 
+    /**
+     * khởi tạo boss bay được
+     * */
     private void initBossBay() {
         Random rnd = new Random();
         int a = rnd.nextInt(200) + 100;
@@ -86,14 +181,21 @@ public class GameManager {
         }
     }
 
+    /**
+    * khởi tạo người chơi
+    * */
     public void initPlayer() {
         tankPlayer = new TankPlayer();
         tankPlayer.setToaDo(100, 370);
-        nguoiChoiChet = false;
+        setNguoiChoiChet(false);
         backGround = new BackGround();
     }
 
-    public void dieuKienTank(int orient) {
+    /**
+     * hàm nhận các phím điều khiển để di chuyển tank người chơi.
+     * @param orient hướng di chuyển nhận từ bàn phím
+     * */
+    public void dieuKienTank(final int orient) {
         tankPlayer.setOrient(orient);
         tankPlayer.move();
         if (tankPlayer.getX() >= 300) {
@@ -105,15 +207,19 @@ public class GameManager {
         }
     }
 
-    public void draw(Graphics2D g2d) {
+    /**
+     * Vẽ các đối tượng
+     * @param g2d đối tượng đồ họa
+     * */
+    public void draw(final Graphics2D g2d) {
         backGround.getBackGround(g2d);
         for (Cloud c : arrCloud) {
             c.draw(g2d);
         }
         bossTank.draw(g2d);
-        if (!nguoiChoiChet) tankPlayer.draw(g2d);
+        if (!isNguoiChoiChet()) tankPlayer.draw(g2d);
         arrBullet.get(0).draw(g2d);
-        if (!playerBatDauBan) {
+        if (!tankPlayer.isPlayerBatDauBan()) {
             arrBullet.get(1).setToaDo(-20, -20);
         }
         arrBullet.get(1).draw(g2d);
@@ -128,13 +234,16 @@ public class GameManager {
                 bd.draw(g2d);
             }
         }
-        if (explode) {
+        if (isExplode()) {
             arrBullet.get(0).explosive(g2d, index, xExplode, yExplode);
         }
     }
 
+    /**
+     * Xe tăng người chơi bị rơi tự do khi ngoài map
+     * */
     public void roiTuDo() {
-        if (!nguoiChoiChet) {
+        if (!isNguoiChoiChet()) {
             if (roiTudo) {
                 if (viTriRoi) {
                     tankPlayer.setX(300);
@@ -152,20 +261,23 @@ public class GameManager {
         }
     }
 
+    /**
+     * Hàm bắn đạn của boss xe tăng
+     * */
     public void bossFire() {
-        bossTank.bossFire(khaiHoa, arrBullet.get(0), (int) t);
-        t++;
+        bossTank.bossFire(bossTank.isKhaiHoa(), arrBullet.get(0), bossTank.getT());
+        bossTank.setT(bossTank.getT() + 1);
         TPlayerDie = System.currentTimeMillis();
-        if (nguoiChoiChet) {
+        if (isNguoiChoiChet()) {
             if (TPlayerDie - tPlayerDie > 3000) {
                 initPlayer();
             }
         } else if (arrBullet.get(0).checkDie(tankPlayer)) {
             xExplode = tankPlayer.getX() - 50;
             yExplode = tankPlayer.getY() - 50;
-            explode = true;
+            setExplode(true);
             tankPlayer.setHeart(tankPlayer.getHeart() - 1);
-            nguoiChoiChet = true;
+            setNguoiChoiChet(true);
             tPlayerDie = System.currentTimeMillis();
             if (tankPlayer.getHeart() == 0) {
                 pauseGame = true;
@@ -182,17 +294,23 @@ public class GameManager {
         }
     }
 
+    /**
+     * Hàm nhận lệnh bắn đạn cho xe tăng người chơi
+     * */
     public void playerBatDauBan() {
-        playerBatDauBan = true;
+        tankPlayer.setPlayerBatDauBan(true);
     }
 
+    /**
+     * Hàm bắn đạn của tank người chơi
+     * */
     public void playerFire() {
         tankPlayer.playerFire(arrBullet.get(1));
-        t2++;
+        tankPlayer.setT2(tankPlayer.getT2() + 1);
         if (arrBullet.get(1).checkWin(bossTank)) {
             xExplode = bossTank.getX() - 50;
             yExplode = bossTank.getY() - 50;
-            explode = true;
+            setExplode(true);
             tankPlayer.setScore(tankPlayer.getScore() + 1);
             bossTank.setToaDo(-100, -100);
             arrBullet.get(1).setToaDo(-100, -100);
@@ -203,7 +321,7 @@ public class GameManager {
                 e.printStackTrace();
             }
             bossTank = new BossTank(hoanhDo, tungDo);
-            nguoiChoiChet = false;
+            setNguoiChoiChet(false);
         }
         for (int i = 0; i < nBossBay; i++) {
             if (arrBullet.get(1).checkBanTrungBossBay(arrBossBay.get(i))) {
@@ -220,7 +338,11 @@ public class GameManager {
         }
     }
 
-    public void initBulletBossBay(ArrayList<BossBay> arrBossBay) {
+    /**
+     * Khởi tạo đạn rơi do boss bay thả
+     * @param arrBossBay mảng các viên đạn
+     * */
+    public void initBulletBossBay(final ArrayList<BossBay> arrBossBay) {
         int i = 0;
         while (i < arrBossBay.size()) {
             arrBulletDrop.add(new BulletDrop(
@@ -230,6 +352,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Hàm di chuyển boss bay theo quỹ đạo nửa elispe
+     * */
     public void bossBayMove() {
         if (nBossBay < 2) {
             Random rnd = new Random();
@@ -254,14 +379,17 @@ public class GameManager {
         thaBom = false;
     }
 
+    /**
+     * Hàm thả bom của boss bay
+     * */
     public void bossBayThaBom() {
         bossBayMove();
         for (BulletDrop bd : arrBulletDrop) {
             bd.move();
-            if (!nguoiChoiChet) {
+            if (!isNguoiChoiChet()) {
                 if (bd.checkMap(backGround) || bd.checkDie(tankPlayer)) {
                     if (bd.checkDie(tankPlayer)) {
-                        nguoiChoiChet = true;
+                        setNguoiChoiChet(true);
                         tPlayerDie = System.currentTimeMillis();
                     }
                     bd.setVisible(false);
@@ -276,7 +404,9 @@ public class GameManager {
         }
     }
 
-
+    /**
+     * Hàm di chuyển đám mây theo quỹ đạo ngang
+     * */
     public void moveCloud() {
         for (Cloud c : arrCloud) {
             if (c.getSoLanDoiHuong() == 0) {
@@ -287,43 +417,107 @@ public class GameManager {
         }
     }
 
+    /**
+     * Hàm di chuyển boss tank theo quỹ đạo ngang và ko rơi khỏi map
+     * */
     public void moveBoss() {
         bossTank.createOrient();
         bossTank.move();
     }
 
+    /**
+     * Di chuyển khung cảnh sang trái khi người chơi di chuyển tank sang phải
+     * */
     public void diChuyenBackGroundTrai() {
         if (!roiTudo) {
             backGround.diChuyenBackGroundTrai();
         }
     }
 
+    /**
+     * Di chuyển khung cảnh sang phải khi người chơi di chuyển tank sang trái
+     * */
     public void diChuyenBackGroundPhai() {
         if (!roiTudo) {
             backGround.diChuyenBackGroundPhai();
         }
     }
 
-    public void xoayNong(int phimAn) {
+    /**
+     * Xoay nòng khi người chơi nhấn phím W và S
+     * @param phimAn mã phím ấn của phím W và S
+     * */
+    public void xoayNong(final int phimAn) {
         tankPlayer.xoayNong(phimAn);
     }
 
+    /**
+     * Nhận lực từ phím space
+     * @param lucF lực nhận được dựa vào thời gian giữ phím space
+     * */
     public void canLuc(int lucF) {
-        GameManager.lucF = lucF * 2;
+        tankPlayer.setLucF(lucF * 2);
+        player.setLucF(lucF * 2);
     }
 
+    /**
+     * giới hạn góc quay của nòng tank người chơi
+     * */
     public void canGoc() {
         int gocTrungGian = tankPlayer.getAngle();
         if (gocTrungGian > 150) gocTrungGian = 148;
         if (gocTrungGian < 30) gocTrungGian = 30;
-        goc = (gocTrungGian - 27) / 0.6f;
+         player.setGoc((int) ((gocTrungGian - 27) / 0.6f));
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
+    /**
+     * Set frame của hiệu ứng nổ khi đạn bắn trúng
+     * */
+    public void setIndex(final int index) {
         this.index = index;
+    }
+
+    /**
+     * Kiểm tra dưng game khi người chơi hết mạng
+     * */
+    public boolean isPauseGame() {
+        return pauseGame;
+    }
+
+    /**
+     * Set pause khi người chơi hết mạng
+     * */
+    public void setPauseGame(boolean pauseGame) {
+        this.pauseGame = pauseGame;
+    }
+
+    /**
+     * Kiểm tra khi người chơi bị đạn bắn trúng
+     * */
+    public boolean isNguoiChoiChet() {
+        return tankPlayer.isDie();
+    }
+
+    /**
+    * Set người chơi bị chết sau khi đạn bắn trúng
+     * @param  nguoiChoiChet biến true false khi người chơi chết hoặc sống lại
+    * */
+    public void setNguoiChoiChet(boolean nguoiChoiChet) {
+        tankPlayer.setDie(nguoiChoiChet);
+    }
+
+
+    /**
+     * Kiểm tra đạn nổ khi đối tượng bị bắn trúng
+     * */
+    public boolean isExplode() {
+        return explode;
+    }
+
+    /**
+     * Set đạn nổ khi đối tượng bị đạn bắn trúng
+     * */
+    public void setExplode(boolean explode) {
+        this.explode = explode;
     }
 }

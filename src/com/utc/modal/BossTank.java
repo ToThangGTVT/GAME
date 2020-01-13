@@ -2,20 +2,18 @@ package com.utc.modal;
 
 import com.utc.background.BackGround;
 import com.utc.entire.Tank;
-import com.utc.manager.GameManager;
 import com.utc.manager.LoadUtils;
 
-import javax.swing.*;
+
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
 public class BossTank extends Tank {
     private Bullet bullet;
-    private static Image imgBanhXe = LoadUtils.getImage("tanks_tankTracks1.png");
-    private static Image imgThanXe = LoadUtils.getImage("tanks_tankDesert_body1.png");
+    private Image imgBanhXe = LoadUtils.getImage("tanks_tankTracks1.png");
+    private Image imgThanXe = LoadUtils.getImage("tanks_tankDesert_body1.png");
+    private boolean khaiHoa = true;
+    private int t;
 
     public BossTank(int x, int y) {
         this.x = x;
@@ -61,11 +59,11 @@ public class BossTank extends Tank {
         }
         t++;
         bullet.setT(t);
-        GameManager.khaiHoa = false;
+        this.khaiHoa = false;
         bullet.move();
         if (bullet.checkMap(new BackGround())) {
-            GameManager.khaiHoa = true;
-            GameManager.t = 0;
+            this.khaiHoa = true;
+            this.t = 0;
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
@@ -74,4 +72,19 @@ public class BossTank extends Tank {
         }
     }
 
+    public boolean isKhaiHoa() {
+        return khaiHoa;
+    }
+
+    public void setKhaiHoa(boolean khaiHoa) {
+        this.khaiHoa = khaiHoa;
+    }
+
+    public int getT() {
+        return t;
+    }
+
+    public void setT(int t) {
+        this.t = t;
+    }
 }

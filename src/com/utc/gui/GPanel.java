@@ -26,7 +26,6 @@ public class GPanel extends JPanel implements KeyListener {
         setFocusable(true);
         addKeyListener(this);
         gameManager.initGame();
-        GameManager.pauseGame = false;
         Thread t1 = new Thread(r);
         t1.start();
         Thread t2 = new Thread(r2);
@@ -86,7 +85,7 @@ public class GPanel extends JPanel implements KeyListener {
         }
     };
 
-    /*
+    /**
      * Boss bắn đạn, đạn bay
      * */
     Runnable r3 = new Runnable() {
@@ -111,9 +110,9 @@ public class GPanel extends JPanel implements KeyListener {
     Runnable r4 = new Runnable() {
         @Override
         public void run() {
-            while (!GameManager.pauseGame) {
+            while (!gameManager.isPauseGame()) {
                 repaint();
-                if (!GameManager.nguoiChoiChet) {
+                if (!gameManager.isNguoiChoiChet()) {
                     if (flag[KeyEvent.VK_D]) {
                         gameManager.dieuKienTank(Entire.ORIENT_RIGHT);
                         gameManager.diChuyenBackGroundTrai();
@@ -130,13 +129,13 @@ public class GPanel extends JPanel implements KeyListener {
                     }
                     gameManager.roiTuDo();
                 }
-                if (GameManager.nguoiChoiChet) {
+                if (gameManager.isNguoiChoiChet()) {
                     try {
                         TimeUnit.SECONDS.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    GameManager.nguoiChoiChet = false;
+                    gameManager.setNguoiChoiChet(false);
                     gameManager.initPlayer();
                 }
 
@@ -198,9 +197,8 @@ public class GPanel extends JPanel implements KeyListener {
                 gameManager.setIndex(indexFrame);
                 indexFrame++;
                 if (indexFrame > 70) {
-//                    GameManager.explode = false;
                     indexFrame = 0;
-                    GameManager.explode = false;
+                    gameManager.setExplode(false);
                 }
                 try {
                     Thread.sleep(20);
